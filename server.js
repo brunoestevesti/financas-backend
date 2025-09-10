@@ -11,9 +11,10 @@ const {
   GITHUB_REPO = "brunoestevesti.github.io",
   GITHUB_BRANCH = "main",
   API_KEY,
-  CORS_ORIGIN = "https://brunoestevesti.github.io",
-  PORT = 3000
+  CORS_ORIGIN = "https://brunoestevesti.github.io"
 } = process.env;
+
+const PORT = process.env.PORT || 3000; // Render define PORT dinamicamente; não defina manualmente
 
 if (!GITHUB_TOKEN || !API_KEY) {
   console.error("❌ Defina GITHUB_TOKEN e API_KEY nas variáveis de ambiente.");
@@ -56,6 +57,11 @@ async function getFileSha(path) {
   }
 }
 
+// Healthcheck
+app.get("/healthz", (_req, res) => {
+  res.send("ok");
+});
+
 app.get("/load/:username", requireApiKey, async (req, res) => {
   const username = (req.params.username || "").trim();
   if (!username) return res.status(400).json({ error: "username required" });
@@ -90,14 +96,13 @@ app.post("/save", requireApiKey, async (req, res) => {
   const { username, userData } = req.body || {};
   if (!username || typeof userData !== "object") {
     return res.status(400).json({ error: "username and userData required" });
-  }
+    }
 
   const path = `data/users/${username}.json`;
   const message = `chore: update data for ${username}`;
 
   try {
     const sha = await getFileSha(path);
-
     const contentBase64 = Buffer.from(JSON.stringify(userData, null, 2)).toString("base64");
 
     await octokit.repos.createOrUpdateFileContents({
@@ -117,10 +122,10 @@ app.post("/save", requireApiKey, async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("OK - Finanças backend");
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Backend rodando na porta ${PORT}`);
 });

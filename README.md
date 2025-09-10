@@ -1,14 +1,20 @@
-# Finanças Backend
+# Finanças Backend (v2)
 
-Este é um backend mínimo em Node.js para persistir dados de usuários no repositório GitHub Pages via API do GitHub.
+Correções importantes para Render:
+- Usa `process.env.PORT` dinâmico (não defina PORT manualmente).
+- `app.listen(..., "0.0.0.0")` para bind público.
+- Endpoint de saúde: `/healthz` (retorna `ok`).
+- `engines.node >= 18`.
 
-## Passos
+## Deploy no Render
+- Build: `npm install`
+- Start: `npm start`
+- Variáveis (Environment):
+  - `GITHUB_TOKEN` (fine-grained, Contents: Read/Write no repo do Pages)
+  - `API_KEY` (sua chave)
+  - `GITHUB_OWNER=brunoestevesti`
+  - `GITHUB_REPO=brunoestevesti.github.io`
+  - `GITHUB_BRANCH=main`
+  - **Não** defina `PORT`.
 
-1. Crie um token de acesso pessoal no GitHub (fine-grained) com permissão de Contents: Read/Write apenas para `brunoestevesti/brunoestevesti.github.io`.
-2. Configure as variáveis no `.env` (baseado no `.env.example`).
-3. Deploy no [Render](https://render.com) ou [Railway](https://railway.app).
-4. Use os endpoints:
-   - `POST /save` → salva os dados do usuário
-   - `GET /load/:username` → carrega dados do usuário
-
-Proteja os endpoints com o cabeçalho `x-api-key`.
+Teste: `https://SEU.onrender.com/healthz` → `ok`
